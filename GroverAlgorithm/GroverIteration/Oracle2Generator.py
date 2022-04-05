@@ -10,7 +10,7 @@ import numpy as np
 from math import sqrt
 # importing Qiskit
 from qiskit import *
-from qiskit.circuit.library import ZGate,OR
+from qiskit.circuit.library import OR
 # import basic plot tools
 from qiskit.tools.visualization import plot_histogram
 
@@ -47,7 +47,7 @@ def positions_XOR(n):
 #definition de la fonction qui permet de marquer tous les ordonancement possible
 # N number of possible positions
 # n number of qubits per position
-def check_Schedule(N,n):
+def Oracle2(N,n):
     cpt=0
     c=0
     #contains the input of the gate position comparison
@@ -77,57 +77,11 @@ def check_Schedule(N,n):
     for i in range(cpt):
         control.append(check[i])
     circuit.mct(control,validity[0])
-    U_checkSchedule = circuit.to_gate()
-    U_checkSchedule.name = "checkSchedule"
-    return  U_checkSchedule        
+    U_oracle2 = circuit.to_gate()
+    U_oracle2.name = "Oracle2"
+    return  U_oracle2       
 
 
-# In[25]:
-
-
-n=1
-N=2**n
-cmp=0
-for i in range(1,N):
-    cmp+=i
-q=QuantumRegister(N*n,'position')
-ancilla=QuantumRegister(n,'ancilla')
-v=QuantumRegister(cmp,'v')
-a=QuantumRegister(1)
-cout=ClassicalRegister(N*n+1,name='c') 
-qc=QuantumCircuit(q,ancilla,v,a,cout)
-qc.h(q)
-arr =[]
-qc.append(check_Schedule(N,n),qc.qubits)
-
-qc.draw('mpl')
-
-
-# In[11]:
-
-
-## measure the address qubits  
-qc.measure([0,1,4],cout)
-
-
-# In[13]:
-
-
-# Use  qasm_simulator
-simulator = Aer.get_backend('qasm_simulator')
-
-# Execute the circuit on the qasm simulator
-job = execute(qc, simulator, shots=1000)
-
-# Grab results from the job
-result = job.result()
-
-# Return counts
-counts = result.get_counts(qc)
-plot_histogram(counts, figsize=(60, 60),title="inequality detector")
-
-
-# In[26]:
 
 
 def memoryEstimationOracle2(cmp,n):
@@ -138,13 +92,6 @@ def memoryEstimationOracle2(cmp,n):
 
 
 # In[27]:
-
-
-n=1
-cmp=0
-for i in range(1,N):
-    cmp+=i
-memoryEstimationOracle2(cmp,n)
 
 
 # %%

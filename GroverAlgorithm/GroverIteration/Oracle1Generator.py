@@ -5,10 +5,7 @@
 
 
 #initialization
-from quantastica.qiskit_toaster import ToasterBackend
 import matplotlib.pyplot as plt
-import math 
-get_ipython().run_line_magic('matplotlib', 'inline')
 import numpy as np
 from math import sqrt
 # importing Qiskit
@@ -76,6 +73,7 @@ def lessComparison(n):
 
 
 def completionTimeInit(n,q,x) :
+    N=2**n
     position = QuantumRegister(n)
     completionTime= QuantumRegister(q)
     circuit = QuantumCircuit(position,completionTime)
@@ -232,9 +230,5 @@ def memoryEstimationOracle1(q,n,M):
 # In[44]:
 
 
-n=2
-M=2
-q=3
-memoryEstimation(q,n,M)
 
 
