@@ -220,6 +220,7 @@ def Oracle1(q,n,M,x,upBound):
 # In[38]:
 
 
+
 def memoryEstimationOracle1(q,n,M):
     N=2**n
     requiredQubits=N*n+2*q+q*(M-1)*(N)+2*q+3
@@ -229,6 +230,4 @@ def memoryEstimationOracle1(q,n,M):
 
 # In[44]:
 
-
-
-
+# %%
