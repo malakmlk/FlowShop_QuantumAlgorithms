@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[6]:
 
 
 #import qiskit
 from qiskit import QuantumCircuit,ClassicalRegister,QuantumRegister,execute
 from qiskit.utils import QuantumInstance
 #import Grover operator parts
-from Oracle1Generator__ import Oracle1
+from Oracle1Generator import Oracle1
 from Oracle2Generator import Oracle2
 from Diffuser import diffuser
 # import backend in order to run the circuit
@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-# In[2]:
+# In[7]:
 
 
 def memoryEstimationOracle(q,n,M,cmp):
@@ -29,7 +29,7 @@ def memoryEstimationOracle(q,n,M,cmp):
     return [requiredQubits,requiredMemorySpace]
 
 
-# In[4]:
+# In[9]:
 
 
 class GroverFlowSop:
@@ -182,9 +182,7 @@ class GroverFlowSop:
         qc = QuantumCircuit(qRegister) 
 
         # init permutations
-        qc.x(1)
-        qc.x(2)
-        qc.x([6,7])
+        qc.h([i for i in range(n*N)])
         # add oracle gate
         qc.append(Oracle1(q,n,M,x,up),qc.qubits)
         
@@ -207,22 +205,8 @@ class GroverFlowSop:
 
 
 
-IBMQ.load_account()
-       
-my_provider = IBMQ.get_provider(hub='ibm-q', group='open', project='main')
-        
-device = my_provider.get_backend("simulator_mps") 
-        
-quantum_instance = QuantumInstance(device, shots =100,skip_qobj_validation = False)
-grover = GroverFlowSop(2,4,[[2,1,1,3],[3,1,2,2]],2,11,1,quantum_instance)
-#measurement = grover.get_oracle1_results()
-#result = grover.execute()
-#result
-measurement = grover.get_oracle1_results()
-measurement        
-
-
 # In[ ]:
+
 
 
 
