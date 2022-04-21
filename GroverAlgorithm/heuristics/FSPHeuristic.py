@@ -3,7 +3,7 @@ from typing import List
 import numpy as np
 import itertools
 
-class FSPHeurstic:
+class FSPHeuristic:
     """
     Heurstics for solving PFSP problem
     """
@@ -46,23 +46,21 @@ class FSPHeurstic:
             "start_time" : self.proc_time[0][seq[0]],
             "end_time" : self.proc_time[0][seq[0]] + self.proc_time[1][seq[0]]
         }
+        print(job)
         jobs_m2.append(job)
-        print(seq)
         for job_id in seq[1::]:
-            id = job_id
             start_time = jobs_m1[-1]["end_time"]
-            end_time = start_time + self.proc_time[0][seq[job_id]]
+            end_time = start_time + self.proc_time[0][job_id]
             job = {
-                "id" : id,
+                "id" : job_id,
                 "start_time" : start_time,
                 "end_time" : end_time
             }
             jobs_m1.append(job)
-            id = job_id
             start_time = max(jobs_m2[-1]["end_time"],end_time)
-            end_time = start_time + self.proc_time[1][seq[job_id]]
+            end_time = start_time + self.proc_time[1][job_id]
             job = {
-                "id" : id,
+                "id" : job_id,
                 "start_time" : start_time,
                 "end_time" : end_time
             }
@@ -118,6 +116,3 @@ class FSPHeurstic:
         return opt_cmax,opt_perm
 
 
-solver = FSPHeurstic(2,4,[[2,1,1,3],[3,1,2,2]])
-results = solver.johnson()
-print(results)

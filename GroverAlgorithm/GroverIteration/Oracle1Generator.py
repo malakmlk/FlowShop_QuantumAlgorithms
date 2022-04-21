@@ -5,7 +5,6 @@
 
 
 #initialization
-from quantastica.qiskit_toaster import ToasterBackend
 import matplotlib.pyplot as plt
 import math 
 get_ipython().run_line_magic('matplotlib', 'inline')
