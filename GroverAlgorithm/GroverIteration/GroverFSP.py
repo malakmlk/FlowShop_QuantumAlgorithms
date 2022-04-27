@@ -1,7 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[6]:
+# In[2]:
+
+
+import sys
+sys.path.insert(0, 'C:\\Users\\malak\\FlowShop_QuantumAlgorithms\\GroverAlgorithm')
+
+
+# In[3]:
 
 
 #import qiskit
@@ -17,19 +24,10 @@ from typing import List
 # Visualization
 import matplotlib.pyplot as plt
 import numpy as np
+from heuristics.FSPHeuristic import FSPHeuristic
 
 
 # In[7]:
-
-
-def memoryEstimationOracle(q,n,M,cmp):
-    N=2**n
-    requiredQubits=N*n+2*q+q*(M-1)*(N)+2*q+3+n+cmp+2
-    requiredMemorySpace = 2**requiredQubits *32/(1024*1024*1024)
-    return [requiredQubits,requiredMemorySpace]
-
-
-# In[9]:
 
 
 class GroverFlowSop:
@@ -158,13 +156,13 @@ class GroverFlowSop:
     def convert_solution_int(self,measurement):
         d = {}
         i,n = 0,self.num_qubits_job
-        perm = 0
+        p = 0
         #measurement = self.execute()
         for perm,prob in measurement.items() :
             for i in range(2**n) :
-                perm += str(int(perm[i*n:i*n+self.num_qubits_job],2))
-            d[perm] = prob
-            perm = ''
+                p += str(int(perm[i*n:(i+1)*n],2))
+            d[p] = prob
+            p = ''
         return d
     
     def get_oracle1_results(self):
@@ -205,8 +203,10 @@ class GroverFlowSop:
 
 
 
+#measurement
+        
+
+
 # In[ ]:
-
-
 
 

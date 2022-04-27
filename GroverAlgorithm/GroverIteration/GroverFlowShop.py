@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[18]:
+import sys
+sys.path.insert(0, 'C:\\Users\\malak\\FlowShop_QuantumAlgorithms\\GroverAlgorithm')
+
+
+# In[6]:
 
 
 #import qiskit
@@ -12,15 +16,14 @@ from Oracle1Generator import Oracle1
 from Oracle2Generator import Oracle2
 from Diffuser import diffuser
 # import backend in order to run the circuit
-from qiskit.providers import Backend, BaseBackend
 from qiskit import *
 from typing import List
 # Visualization
-import matplotlib.pyplot as plt
 import numpy as np
+from heuristics.FSPHeuristic import FSPHeuristic
 
 
-# In[19]:
+# In[7]:
 
 
 def memoryEstimationOracle(q,n,M,cmp):
@@ -30,7 +33,7 @@ def memoryEstimationOracle(q,n,M,cmp):
     return [requiredQubits,requiredMemorySpace]
 
 
-# In[20]:
+# In[8]:
 
 
 class GroverFlowSop:
@@ -113,7 +116,6 @@ class GroverFlowSop:
             n=self.num_qubits_job
             N=2**(n)
             q=self.num_qubits_cimj
-            x=self.Pm
             M=self.num_machine
             if n == 1 :
                 nqubits = N*n+2*q+q*(M-1)*(N)+2*q+3+2
@@ -138,7 +140,7 @@ class GroverFlowSop:
             qc.measure([i for i in range(n*N)], measurement_cr)    
             return qc
     
-    def execute(self):
+    def execute(self) -> dict :
         qc = self.ConstructCircuit()
         result = self.quantum_instance.execute(qc)   
         state = result.get_counts(qc)
@@ -147,7 +149,7 @@ class GroverFlowSop:
         self._circuit_results = {b: (v / shots) ** 0.5 for (b, v) in state.items()} 
         return hist
 
-    def memoryEstimationOracle1(self):
+    def memoryEstimationOracle1(self) -> List:
         M=self.num_machine
         n=self.num_qubits_job
         q=self.num_qubits_cimj
@@ -157,8 +159,56 @@ class GroverFlowSop:
         return [requiredQubits,requiredMemorySpace]
         
     #def memoryEstimationOracle2(self):
+    def convert_solution_int(self,measurement):
+        d = {}
+        i,n = 0,self.num_qubits_job
+        p = 0
+        #measurement = self.execute()
+        for perm,prob in measurement.items() :
+            for i in range(2**n) :
+                p += str(int(perm[i*n:(i+1)*n],2))
+            d[p] = prob
+            p = ''
+        return d
+    
+    def get_oracle1_results(self):
+        # instance 
+        n=self.num_qubits_job
+        N=2**(n)
+        q=self.num_qubits_cimj
+        x=self.Pm
+        M=self.num_machine
+        up=self.upperBound
+        
+        #Create oracle 1
+        nqubits = N*n+2*q+q*(M-1)*(N)+2*q+3
+        qRegister = QuantumRegister(nqubits)
+        qc = QuantumCircuit(qRegister) 
+
+        # init permutations
+        qc.h([i for i in range(n*N)])
+        # add oracle gate
+        qc.append(Oracle1(q,n,M,x,up),qc.qubits)
+        
+        #Measurement 
+        measurement_rc = ClassicalRegister(n*N + q + 1)
+        qc.add_register(measurement_rc)
+        qc.measure([i for i in range(n*N)] + [i for i in range(n*N +q+q*(M-1)*N,n*N +2*q + q*(M-1)*N)] +[nqubits -1] ,measurement_rc) 
+        result = self.quantum_instance.execute(qc)   
+        state = result.get_counts(qc)
+        shots = self.quantum_instance.run_config.shots
+        results = {key[::-1]: val / shots for key, val in sorted(state.items()) if val > 0}
+        self._circuit_results = {b: (v / shots) ** 0.5 for (b, v) in state.items()} 
+        return results
+    
+    def save_results(self,file_path : str,grover_results):
+        with open(file_path, 'w') as f:
+            for line in grover_results:
+                f.write(line)
+                f.write('\n')
 
 
+        
 
 
         

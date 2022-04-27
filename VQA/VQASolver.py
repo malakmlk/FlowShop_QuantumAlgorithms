@@ -13,7 +13,6 @@ from qiskit.circuit.library import TwoLocal
 
 
 
-
 class VariationalSolver():
     def __init__(self, 
         forme : int,
@@ -61,7 +60,6 @@ class VariationalSolver():
         spsa = SPSA(maxiter=1000)
         vqe = VQE(ansatz, optimizer=spsa, quantum_instance=device)
         result = vqe.compute_minimum_eigenvalue(operator)
-        print(result)
         optimizer_evals = result.optimizer_evals
         return optimizer_evals
     
@@ -114,7 +112,7 @@ class VariationalSolver():
         # to 1024.
         'shots': 500 # integer
         }
-        provider = IBMQ.enable_account('f7604df03172d5c0401b28b95b54dc35daa6f593c9be6f18c9d5c58deeea94f82daf492cdfb7d39c496e22fd7e6bc979cefad6517f61b22eeea0cdf355b1c0c6')
+        #provider = IBMQ.enable_account('f7604df03172d5c0401b28b95b54dc35daa6f593c9be6f18c9d5c58deeea94f82daf492cdfb7d39c496e22fd7e6bc979cefad6517f61b22eeea0cdf355b1c0c6')
         IBMQ.load_account()
         provider = IBMQ.get_provider(
             hub='ibm-q',

@@ -1,39 +1,54 @@
 
 from FSPasTSP import FSPasTSP
+from timeIndex import FSPTimeIndexform
 from VQASolver import VariationalSolver
 from qiskit.providers.aer import QasmSimulator
 from qiskit.utils import  QuantumInstance
 from qiskit.algorithms.optimizers import SPSA
 from qiskit import IBMQ
+from qiskit_optimization.algorithms import GurobiOptimizer
+import sys
+
+from qiskit.providers.aer import QasmSimulator
+device = QuantumInstance(QasmSimulator(method='matrix_product_state'), shots=300)
+vqa_Solver = VariationalSolver(1,1,'C:\\Users\\malak\\FlowShop_QuantumAlgorithms\\VQA\\instance.txt')
+instances = vqa_Solver.read_Data()
+
+#file_path = 'C:\\Users\\malak\\FlowShop_QuantumAlgorithms\\VQA\\analyse.txt'
+#sys.stdout = open(file_path, "a+")
+
 
 
 options = {
 	'backend_name': 'simulator_mps'
 }
-
-vqa_Solver = VariationalSolver(1,1,'C:\\Users\\malak\\FlowShop_QuantumAlgorithms\\VQA\\instances.txt')
 spsa = SPSA(maxiter=1000)
-instances = vqa_Solver.read_Data()
-init =  [ -0.029123691474876496,4.470453211610139, 3.1324681719230516, -3.1123355953849456, -0.7179296375389055, -1.7993958992931327,
-         -3.0975445529229844, -0.04882737255190691, 4.730548693878821, 8.081838717289603, -4.093837860152379, -2.4556250922630105,
-         -0.026183921007018853, -6.020154815420562, 2.490012507288912, 3.0556472502649856, -6.153477910004308, -1.6761802162120112, -3.1551924476783157,
-         3.1721099166980626, 3.0809716272781476, -3.0764455215766735, 6.3899354456653805, 2.9125467130722558, -3.325109285456789,
-          5.760300294876472, -1.8615022331726843, 6.139164876999348, -6.184916051962126, -2.8388609747634503, -6.305324416729742,
-          6.2594953446736445, -3.196675835454436, 2.069498621211109, 2.3128505464352074, -3.349362915824639, 5.6828799209327245, 3.274394720798485, -3.198882399632413,
-          -0.08214739585954278, 3.0234606379596074, -1.9259556722182702, 7.740996602906441, 2.9561223610029956, 6.212383687758575, -6.367384728941137,
-          3.0328321437923544, -4.665187657247489, 3.0230104495747017, -0.32928780372192346, 3.6026465422959633, 6.298326138036498, -6.072329044888034,
-          0.6543593692401828,6.2533985352299775, 4.665722995262803, -1.963904382355082, -3.6620446451259037, 3.0890542539776944, -3.3279351912345057,
- -6.491474589422556, -0.05970130390504724, 6.132443107125408, 0.2623202272504333,-1.3093778362365185, -3.0949893458114075, 3.1758596696636077,
- 6.247228587244737, 3.0630867694767803, -2.087100032184544, 3.2010393127677648, 2.522082276664568, 0.266581893905624,
--3.823204914713119, 3.2783559609383874, -0.17523894492227238, -0.5862630504540385, 1.48216276287745, -3.150044492258439, 3.1414201379129554, -6.176176098778444, 3.226550018339177, -6.159398330519541, -3.9634822770191347, 0.9332701725687893,
- 6.264360685201141, 3.5077633686094516, -3.769450431195274, 2.2490085369536086, 3.2001512827688887, 0.7732725313248772, 3.5135165967543256, 5.717757995417615, 3.690018305870696, -4.59575731042498, 3.1012762376028014,-0.042351314354470176, 2.6233097918363,-0.7835694593538289,3.155667786020155]
 for key,value in instances.items():
-    for i in range(1,2):
+    for i in range(1,3):
         fsp = FSPasTSP(value[0][1],value[1],value[0][0],i)
-        distance,order = fsp.brute_force()
         op,off = fsp.to_Ising()
-        vqa_result = vqa_Solver.VQE_run_time_service(value[0][0],op,options,spsa,init)  
+        vqa_result = vqa_Solver.VQE_run_time_service(value[0][0],op,options,spsa,"random")  
+        vqa_result = vqa_Solver.VQE(op,device)
         print(value)
         print(vqa_result)
-        #print(distance,order)
+        fsp = FSPTimeIndexform(8,value[0][1],value[1],value[0][0])
+        op,off = fsp.Ising(i)
+        vqa_result = vqa_Solver.VQE_run_time_service(value[0][0],op,options,spsa,"random")  
+        vqa_result = vqa_Solver.VQE(op,device)
+        print(value)
+        print(vqa_result)
         print('-------------------------')
+
+
+"""
+# QUBO VISUALIZATION 
+for key,value in instances.items():
+    #create time index object
+    for i in range(1,4):
+        T = sum(value[1][i][j] for i in range(value[0][1]) for j in range(value[0][0]) )
+        fsp = FSPTimeIndexform(T,value[0][1],value[1],value[0][0])
+        qubo = fsp.to_qubo(i)
+        print(qubo)      
+        print(GurobiOptimizer().solve(qubo))
+
+"""

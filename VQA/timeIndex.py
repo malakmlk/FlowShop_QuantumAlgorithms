@@ -20,7 +20,7 @@ from itertools import product
 
 class FSPTimeIndexform():
     """Quantum Optimization for the FSP tIME Index FORME"""
-    def __init__(self,timeSpan : int,numberMachine : int,procTime:List[List[int]],numberJobs : int,approach : int)-> None :
+    def __init__(self,timeSpan : int,numberMachine : int,procTime:List[List[int]],numberJobs : int)-> None :
         """
         Args : 
         timeSpan : the makespan value
@@ -31,7 +31,6 @@ class FSPTimeIndexform():
         self.numberMachine = numberMachine
         self.numberJobs = numberJobs
         self.procTime = procTime
-        self.approach = approach
 
      
     def to_quadratic_program_validity(self)-> QuadraticProgram :
@@ -158,10 +157,13 @@ class FSPTimeIndexform():
     
     def to_qubo(self,approach)->QuadraticProgram:  
         conv = QuadraticProgramToQubo()
-        return conv.convert(self.to_quadratic_program_time_threshold())
+        if approach == 1 : op = self.to_quadratic_program_time_threshold()
+        if approach == 2 : op = self.to_quadratic_program_validity()
+        if approach == 3 : op = self.to_quadratic_program_approx()
+        return conv.convert(op)
 
-    def Ising(self) -> QuadraticProgram :
-         qubitOp, offset = self.to_qubo(1).to_ising()
+    def Ising(self,approach) -> QuadraticProgram :
+         qubitOp, offset = self.to_qubo(approach).to_ising()
          return qubitOp, offset 
 
 
