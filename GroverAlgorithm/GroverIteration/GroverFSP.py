@@ -15,8 +15,8 @@ sys.path.insert(0, 'C:\\Users\\malak\\FlowShop_QuantumAlgorithms\\GroverAlgorith
 from qiskit import QuantumCircuit,ClassicalRegister,QuantumRegister,execute
 from qiskit.utils import QuantumInstance
 #import Grover operator parts
-from Oracle1Generator import Oracle1
-from Oracle2Generator import Oracle2
+from oracle1_generator import Oracle1
+from oracle2_generator import Oracle2
 from Diffuser import diffuser
 # import backend in order to run the circuit
 from qiskit import *

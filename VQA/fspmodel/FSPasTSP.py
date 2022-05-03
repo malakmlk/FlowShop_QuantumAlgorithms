@@ -4,23 +4,16 @@
 # In[1]:
 
 
-from qiskit.algorithms import VQE
 from qiskit_optimization.translators import from_docplex_mp
 from docplex.mp.model import Model
 from qiskit_optimization.converters import QuadraticProgramToQubo
 from typing import List
 from itertools import permutations
 from qiskit import IBMQ
-from qiskit.algorithms.optimizers import SPSA
-from qiskit.circuit.library import TwoLocal
 # useful additional packages
-from qiskit.optimization.applications.ising.docplex import get_operator
 import networkx as nx
-from qiskit.utils import algorithm_globals, QuantumInstance
 from qiskit_optimization.problems import QuadraticProgram
 from qiskit import Aer
-from qiskit.opflow.primitive_ops import PauliSumOp
-from qiskit.quantum_info.operators import SparsePauliOp 
 
 
 # In[16]:

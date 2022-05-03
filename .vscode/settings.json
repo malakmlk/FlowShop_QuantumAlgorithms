@@ -1,3 +1,8 @@
 {
-    "jupyter.jupyterServerType": "local"
+    "jupyter.jupyterServerType": "local",
+    "python.analysis.extraPaths": [
+        "./VQA/vqasolver",
+        "./VQA/vqasolver",
+        "./VQA/fspmodel"
+    ]
 }
