@@ -33,7 +33,7 @@ class FSPasTSP:
         self.procTime = procTime
         self.approach = approach
 
-     def convert_FSP_WH(self) :
+     def convert_FSP_WH(self) -> dict:
          """
              We are using Widemar & Hertz approach
              duv=p1,u + \sum_2^m (m-i)|pi,u - pi-1,v| + pmv
@@ -49,7 +49,7 @@ class FSPasTSP:
              }
          return TspInstance
 
-     def convert_FSP_SS6(self) :
+     def convert_FSP_SS6(self) -> dict:
          TspInstance={
              (u,v):
              sum([max(self.procTime[i][u]-self.procTime[i-1][v],0)+2*abs(min(self.procTime[i][u]-self.procTime[i-1][v],0)) for i in range(1,self.numberMachine)])
@@ -59,7 +59,7 @@ class FSPasTSP:
              }
          return TspInstance
 
-     def convert_FSP_Gupta(self) :
+     def convert_FSP_Gupta(self) -> dict:
          def CT_j (u,v,j) -> int :
              ct = 0
              if j == 0 : return ct
@@ -75,7 +75,7 @@ class FSPasTSP:
          }
          return TspInstance
 
-     def convert_FSP_Moccelin(self) :
+     def convert_FSP_Moccelin(self) -> dict:
           def UBX (u,v,m) -> int:
               ubx = 0
               if m == 0 : return ubx
@@ -90,7 +90,7 @@ class FSPasTSP:
          }
           return TspInstance
      
-     def convert_FSP_SS1(self) :
+     def convert_FSP_SS1(self) -> dict:
          TspInstance = {
             (u,v) :
             sum([abs(self.procTime[i][u]-self.procTime[i-1][v]) for i in range(1,self.numberMachine)])
@@ -100,7 +100,7 @@ class FSPasTSP:
          }
          return TspInstance
      
-     def quadratic_program(self)->QuadraticProgram:
+     def quadratic_program(self)-> QuadraticProgramToQubo:
          """
          approach :
            - 1 : convert_FSP_WH()
@@ -119,10 +119,10 @@ class FSPasTSP:
          n=self.numberJobs
          x = {(i, k): mdl.binary_var(name=f"x_{i}_{k}") for i in range(n) for k in range(n)}
          cost_fun=mdl.sum(
-             TspIns[(u,v)]* x[(u, k)] * x[(v, (k + 1) % n)]
+             TspIns[(u,v)]* x[(u, k)] * x[(v,k + 1)]
              for u in range(n)
              for v in range(n)
-             for k in range(n)
+             for k in range(n-1)
              if u != v
          )
          mdl.minimize(cost_fun)
@@ -180,9 +180,3 @@ class FSPasTSP:
                     best_order = order
                     last_best_distance = distance
          return last_best_distance, best_order
-     
-   
-
-
-
-
