@@ -1,6 +1,7 @@
 from random import random
 from unittest import result
-from qiskit.algorithms import VQE
+import numpy as np
+from qiskit.algorithms import VQE,QAOA
 from typing import List
 from qiskit import IBMQ
 from qiskit.algorithms.optimizers import SPSA
@@ -128,6 +129,15 @@ class VariationalSolver():
     
         return result
         
-    def QAOA(self,operator,device):
-        
-        return 0
+    def QAOA(self,operator,device,j):
+        spsa = SPSA(maxiter=1000)
+        qaoa = QAOA(operator,optimizer=spsa, p=j, quantum_instance=device,include_custom=True)
+        result = qaoa.run(device)
+        #Output processing
+        print(' Eigenstate:', result['eigenstate'])
+        print('QAOA time:', result['optimizer_time'])
+        n = len(list(result['eigenstate'].values()))
+        solution = np.hstack((np.array(list(result['eigenstate'].values())).reshape(n,1),
+                                  np.array(list(result['eigenstate'].keys())).reshape(n,1)))
+        #print(solution)
+        return solution
