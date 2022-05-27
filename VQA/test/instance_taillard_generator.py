@@ -20,7 +20,7 @@ def instance_generator(N,M,min,max):
     return pm 
 
 
-print(instance_generator(2,3,1,5))  
+#print(instance_generator(2,3,1,5))  
     
 
 
