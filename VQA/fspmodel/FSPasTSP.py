@@ -148,15 +148,15 @@ class FSPasTSP:
           nx.draw_networkx_edge_labels(graph,pos,edge_labels=weight_labels)
           return graph
 
-     def to_QUBO(self)->QuadraticProgram :
+     def to_qubo(self)->QuadraticProgram :
          conv = QuadraticProgramToQubo()
          return conv.convert(self.quadratic_program())
 
-     def to_Ising(self)  :
+     def to_ising(self)  :
          """
          qubitOp:Hamiltonian operator, offset: constant
          """
-         qubitOp, offset = self.to_QUBO().to_ising()
+         qubitOp, offset = self.to_qubo().to_ising()
          return qubitOp, offset
      
      def brute_force(self) :

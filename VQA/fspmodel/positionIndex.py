@@ -3,21 +3,24 @@
 
 # In[1]:
 
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
 
 from qiskit_optimization import QuadraticProgram
 from qiskit_optimization.translators import from_docplex_mp
 from docplex.mp.model import Model
 from qiskit_optimization.converters import QuadraticProgramToQubo
-from qiskit.utils import algorithm_globals, QuantumInstance
-from qiskit_optimization.algorithms import GurobiOptimizer
 from typing import List
 
 
 # In[15]:
 
 
-class position_Index : 
-    def __init__(self,numberMachine : int,procTime:List[List[int]],numberJobs : int,approach : int) :
+class positionIndex : 
+    def __init__(self,numberMachine : int,procTime:List[List[int]],numberJobs : int) :
         """
         Args :
         numberMachine : machine number
@@ -26,7 +29,7 @@ class position_Index :
         self.numberMachine = numberMachine
         self.numberJobs = numberJobs
         self.procTime = procTime
-        self.approach = approach
+        
     
     def to_quadratic_program_approx(self) :
         mdl = Model("Position based model")
@@ -58,9 +61,12 @@ class position_Index :
         op = from_docplex_mp(mdl)
         return op
 
-FSP = position_Index(2,[[1,2],[2,1]],2,1)       
-mdl=FSP.to_quadratic_program()
-print(mdl.export_as_lp_string())
-print("gurobi")
-print(GurobiOptimizer().solve(mdl))
+    def to_qubo(self)->QuadraticProgram:  
+        conv = QuadraticProgramToQubo()
+        return conv.convert(self.to_quadratic_program_approx())
+
+    def to_ising(self) -> QuadraticProgram :
+         qubitOp, offset = self.to_qubo().to_ising()
+         return qubitOp, offset 
+
 
