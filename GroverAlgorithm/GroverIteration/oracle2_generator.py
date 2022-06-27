@@ -84,8 +84,10 @@ def Oracle2(N,n):
 
 
 
-def memoryEstimationOracle2(cmp,n):
+def memoryEstimationOracle2(n):
     N=2**n
+    for i in range(1,N): 
+        cmp+=i
     requiredQubits=n*N+n+cmp+1
     requiredMemorySpace = 2**requiredQubits *32/(1024*1024*1024)
     return [requiredQubits,requiredMemorySpace]

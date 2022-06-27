@@ -68,11 +68,39 @@ class FSPHeuristic:
         optim_cmax = end_time
         return seq,optim_cmax,[jobs_m1,jobs_m2]    
 
+    def sum_pm(self,idx_job):
+        sum_pij = 0
+        for i in range(self.nb_machine):
+            sum_pij += self.proc_time[i][idx_job]    
+        return sum_pij
     
-    def NEH(self):
+    def order_neh(self):
+        my_seq = []
+        for j in range(self.nb_jobs):
+            my_seq.append(j)
+        return sorted(my_seq,key = lambda x : self.sum_pm(x), reverse = True)
+    
+    def insertion(sequence,index_position,value):
+        new_seq = sequence[:]
+        new_seq.insert(index_position,value)
+        return new_seq
+
+    def neh(self):
         """
         NEH heuristic for solving 
         """
+        order_seq = self.order_neh()
+        seq_current = [order_seq[0]]
+        for i in range(1, self.nb_jobs):
+            min_cmax = float("inf")
+            for j in range(0, i+1):
+                tmp_seq = self.insertion(seq_current, j, order_seq[i])
+                cmax_tmp = self.calculate_makespan(tmp_seq)
+                if min_cmax >cmax_tmp :
+                    best_seq = tmp_seq
+                    min_cmax = cmax_tmp
+            seq_current = best_seq
+        return seq_current,self.calculate_makespan(seq_current)
         
     
     def calculate_makespan(self, seq):
